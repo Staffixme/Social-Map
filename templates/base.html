@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="SocialMap - Социальная сеть про различные точки мира">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SocialMap - Контент про места на карте</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container header__container">
+            <a href="/" class="header__logo">
+                <img src="/static/img/SocialMap.png" alt="SocialMap" class="header__logo-img">
+            </a>
+            <div class="header__search">
+                <img src="/static/images/search.svg" alt="" class="header__search-icon">
+                <input type="text" placeholder="Поиск" class="header__search-input">
+            </div>
+            <div class="header__notifications">
+                <a href="/notifications" class="header__notifications-link">
+                    <img src="/static/img/bell.png" alt="" class="header__notifications-icon">
+                    <span class="header__notifications-count">1</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container main__container">
+            <aside class="sidebar">
+                <nav class="nav">
+                    <a href="/profile" class="nav__item">
+                        <img src="/static/img/user.png" alt="" class="nav__item-icon">
+                        <span class="nav__item-text">Юзернейм (профиль)</span>
+                    </a>
+                    <a href="/" class="nav__item">
+                        <img src="/static/img/home.png" alt="" class="nav__item-icon">
+                        <span class="nav__item-text">Главная</span>
+                    </a>
+                    <a href="/places" class="nav__item">
+                        <img src="/static/img/place.png" alt="" class="nav__item-icon">
+                        <span class="nav__item-text">Места</span>
+                    </a>
+                    <a href="/subscriptions" class="nav__item">
+                        <img src="/static/img/subs.png" alt="" class="nav__item-icon">
+                        <span class="nav__item-text">Подписки</span>
+                    </a>
+                </nav>
+                <button class="sidebar__new-post">Новый пост</button>
+            </aside>
+
+            <div class="content">
+                {% block content %}{% endblock %}
+            </div>
+
+            <aside class="places">
+        <h2 class="places__title">Популярные места</h2>
+        <div class="places__list">
+            <a href="#" class="place-card">
+                <h3 class="place-card__title">Название места</h3>
+                <p class="place-card__address">Адрес</p>
+            </a>
+            <a href="#" class="place-card">
+                <h3 class="place-card__title">Название места</h3>
+                <p class="place-card__address">Адрес</p>
+            </a>
+            <a href="#" class="place-card">
+                <h3 class="place-card__title">Название места</h3>
+                <p class="place-card__address">Адрес</p>
+            </a>
+            <a href="#" class="place-card">
+                <h3 class="place-card__title">Название места</h3>
+                <p class="place-card__address">Адрес</p>
+            </a>
+            <a href="#" class="place-card">
+                <h3 class="place-card__title">Название места</h3>
+                <p class="place-card__address">Адрес</p>
+            </a>
+        </div>
+        <a href="/places" class="places__more">Больше</a>
+    </aside>
+        </div>
+        
+    </main>
+    
+
+    <script src="/static/js/main.js"></script>
+</body>
+</html>

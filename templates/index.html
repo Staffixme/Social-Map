@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="feed">
+    <div class="post">
+        <div class="post__header">
+            <div class="post__author">
+                <img src="/static/images/avatar.jpg" alt="" class="post__author-avatar">
+                <div class="post__author-info">
+                    <span class="post__author-name">Юзернейм</span>
+                    <span class="post__status">Вы подписаны</span>
+                </div>
+            </div>
+            <span class="post__date">1 января, 10:00</span>
+        </div>
+        <h2 class="post__title">Заголовок поста</h2>
+        <p class="post__content">Содержание поста</p>
+        <div class="post__place">
+            <img src="/static/images/map-preview.jpg" alt="" class="post__place-preview">
+            <div class="post__place-info">
+                <h3 class="post__place-title">Название места</h3>
+                <p class="post__place-address">Адрес</p>
+            </div>
+        </div>
+        <div class="post__actions">
+            <button class="post__action">
+                <img src="/static/images/comment.svg" alt="" class="post__action-icon">
+                <span class="post__action-count">100</span>
+            </button>
+            <button class="post__action post__action--active">
+                <img src="/static/images/heart.svg" alt="" class="post__action-icon">
+                <span class="post__action-count">101</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="post">
+        <div class="post__header">
+            <div class="post__author">
+                <img src="/static/images/avatar.jpg" alt="" class="post__author-avatar">
+                <div class="post__author-info">
+                    <span class="post__author-name">Юзернейм</span>
+                    <button class="post__follow-btn">Подписаться</button>
+                </div>
+            </div>
+            <span class="post__date">1 января, 10:00</span>
+        </div>
+        <h2 class="post__title">Длинный заголовок поста с вложениями в виде картинок</h2>
+        <p class="post__content">Содержание поста с вложениями в виде картинок</p>
+        <div class="post__gallery">
+            <img src="/static/images/post-image-1.jpg" alt="" class="post__gallery-item">
+            <img src="/static/images/post-image-2.jpg" alt="" class="post__gallery-item">
+        </div>
+        <div class="post__place">
+            <img src="/static/images/map-preview.jpg" alt="" class="post__place-preview">
+            <div class="post__place-info">
+                <h3 class="post__place-title">Название места</h3>
+                <p class="post__place-address">Адрес</p>
+            </div>
+        </div>
+        <div class="post__actions">
+            <button class="post__action">
+                <img src="/static/images/comment.svg" alt="" class="post__action-icon">
+                <span class="post__action-count">100</span>
+            </button>
+            <button class="post__action">
+                <img src="/static/images/heart.svg" alt="" class="post__action-icon">
+                <span class="post__action-count">100</span>
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
