@@ -3,37 +3,47 @@
     <link rel="stylesheet" href="/static/css/styles.css">
 </head>
 <body>
-    <div class="auth-container">
-        <div class="auth-card">
-            <h1 class="auth-title">Создайте аккаунт</h1>
+<div class="auth-container">
+    <div class="auth-card">
+        <h1 class="auth-title">Создайте аккаунт</h1>
 
-            <form class="auth-form">
-                <div class="form-group">
-                    <label for="username" class="form-label">Имя пользователя</label>
-                    <input type="text" id="username" class="form-input" placeholder="Имя пользователя">
-                </div>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
 
-                <div class="form-group">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" id="email" class="form-input" placeholder="email">
-                </div>
-
-                <div class="form-group">
-                    <label for="password" class="form-label">Пароль</label>
-                    <input type="password" id="password" class="form-input" placeholder="Пароль">
-                </div>
-
-                <div class="form-group">
-                    <label for="confirm-password" class="form-label">Подтвердите пароль</label>
-                    <input type="password" id="confirm-password" class="form-input" placeholder="Повторите пароль">
-                </div>
-
-                <button type="submit" class="auth-button">Зарегистрироваться</button>
-            </form>
-
-            <div class="auth-footer">
-                Уже есть аккаунт? <a href="/" class="auth-link">Войдите</a>
+        <form class="auth-form" method="POST" action="{{ url_for('register') }}">
+            <div class="form-group">
+                <label for="username" class="form-label">Имя пользователя</label>
+                <input type="text" id="username" name="username" class="form-input" placeholder="Имя пользователя" required>
             </div>
+
+            <div class="form-group">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" id="email" name="email" class="form-input" placeholder="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password" class="form-label">Пароль</label>
+                <input type="password" id="password" name="password" class="form-input" placeholder="Пароль" required>
+            </div>
+
+            <div class="form-group">
+                <label for="confirm-password" class="form-label">Подтвердите пароль</label>
+                <input type="password" id="confirm-password" name="confirm-password" class="form-input" placeholder="Повторите пароль" required>
+            </div>
+
+            <button type="submit" class="auth-button">Зарегистрироваться</button>
+        </form>
+
+        <div class="auth-footer">
+            Уже есть аккаунт? <a href="{{ url_for('login') }}" class="auth-link">Войдите</a>
         </div>
     </div>
+</div>
 </body>

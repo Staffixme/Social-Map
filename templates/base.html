@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -17,11 +16,16 @@
                 <img src="/static/images/search.svg" alt="" class="header__search-icon">
                 <input type="text" placeholder="Поиск" class="header__search-input">
             </div>
-            <div class="header__notifications">
-                <a href="/notifications" class="header__notifications-link">
-                    <img src="/static/img/bell.png" alt="" class="header__notifications-icon">
-                    <span class="header__notifications-count">1</span>
-                </a>
+            <div class="header__actions">
+                <div class="header__notifications">
+                    <a href="/notifications" class="header__notifications-link">
+                        <img src="/static/img/bell.png" alt="" class="header__notifications-icon">
+                        <span class="header__notifications-count">1</span>
+                    </a>
+                </div>
+                {% if 'user_id' in session %}
+                <a href="/logout" class="header__logout">Выйти</a>
+                {% endif %}
             </div>
         </div>
     </header>
@@ -32,7 +36,13 @@
                 <nav class="nav">
                     <a href="/profile" class="nav__item">
                         <img src="/static/img/user.png" alt="" class="nav__item-icon">
-                        <span class="nav__item-text">Юзернейм (профиль)</span>
+                        <span class="nav__item-text">
+                            {% if 'username' in session %}
+                                {{ session['username'] }}
+                            {% else %}
+                                Профиль
+                            {% endif %}
+                        </span>
                     </a>
                     <a href="/" class="nav__item">
                         <img src="/static/img/home.png" alt="" class="nav__item-icon">
@@ -55,35 +65,33 @@
             </div>
 
             <aside class="places">
-        <h2 class="places__title">Популярные места</h2>
-        <div class="places__list">
-            <a href="#" class="place-card">
-                <h3 class="place-card__title">Название места</h3>
-                <p class="place-card__address">Адрес</p>
-            </a>
-            <a href="#" class="place-card">
-                <h3 class="place-card__title">Название места</h3>
-                <p class="place-card__address">Адрес</p>
-            </a>
-            <a href="#" class="place-card">
-                <h3 class="place-card__title">Название места</h3>
-                <p class="place-card__address">Адрес</p>
-            </a>
-            <a href="#" class="place-card">
-                <h3 class="place-card__title">Название места</h3>
-                <p class="place-card__address">Адрес</p>
-            </a>
-            <a href="#" class="place-card">
-                <h3 class="place-card__title">Название места</h3>
-                <p class="place-card__address">Адрес</p>
-            </a>
+                <h2 class="places__title">Популярные места</h2>
+                <div class="places__list">
+                    <a href="#" class="place-card">
+                        <h3 class="place-card__title">Название места</h3>
+                        <p class="place-card__address">Адрес</p>
+                    </a>
+                    <a href="#" class="place-card">
+                        <h3 class="place-card__title">Название места</h3>
+                        <p class="place-card__address">Адрес</p>
+                    </a>
+                    <a href="#" class="place-card">
+                        <h3 class="place-card__title">Название места</h3>
+                        <p class="place-card__address">Адрес</p>
+                    </a>
+                    <a href="#" class="place-card">
+                        <h3 class="place-card__title">Название места</h3>
+                        <p class="place-card__address">Адрес</p>
+                    </a>
+                    <a href="#" class="place-card">
+                        <h3 class="place-card__title">Название места</h3>
+                        <p class="place-card__address">Адрес</p>
+                    </a>
+                </div>
+                <a href="/places" class="places__more">Больше</a>
+            </aside>
         </div>
-        <a href="/places" class="places__more">Больше</a>
-    </aside>
-        </div>
-        
     </main>
-    
 
     <script src="/static/js/main.js"></script>
 </body>

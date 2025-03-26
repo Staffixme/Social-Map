@@ -6,15 +6,25 @@
     <div class="auth-card">
         <h1 class="auth-title">Войдите в SocialMap</h1>
 
-        <form class="auth-form">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form class="auth-form" method="POST" action="{{ url_for('login') }}">
             <div class="form-group">
                 <label for="email" class="form-label">Email</label>
-                <input type="email" id="email" class="form-input" placeholder="Введите ваш email">
+                <input type="email" id="email" name="email" class="form-input" placeholder="Введите ваш email" required>
             </div>
 
             <div class="form-group">
                 <label for="password" class="form-label">Пароль</label>
-                <input type="password" id="password" class="form-input" placeholder="Введите пароль">
+                <input type="password" id="password" name="password" class="form-input" placeholder="Введите пароль" required>
             </div>
 
             <button type="submit" class="auth-button">Войти</button>
@@ -24,7 +34,7 @@
             <span>или</span>
         </div>
         <div class="auth-footer">
-            Нет аккаунта? <a href="/register" class="auth-link">Зарегистрируйтесь</a>
+            Нет аккаунта? <a href="{{ url_for('register') }}" class="auth-link">Зарегистрируйтесь</a>
         </div>
     </div>
 </div>
