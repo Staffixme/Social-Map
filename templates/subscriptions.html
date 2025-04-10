@@ -1,0 +1,53 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="fas fa-users me-2"></i> My Subscriptions</h5>
+    </div>
+    <div class="card-body">
+        {% if subscribed_users %}
+        <div class="row row-cols-1 row-cols-md-2 g-4">
+            {% for user in subscribed_users %}
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body d-flex">
+                        <img src="{{ user.avatar }}" alt="{{ user.username }}" class="avatar rounded-circle me-3">
+                        <div>
+                            <h5 class="card-title mb-1">
+                                <a href="{{ url_for('user_profile', username=user.username) }}" class="text-decoration-none">{{ user.username }}</a>
+                            </h5>
+                            <p class="card-text text-muted small">
+                                <i class="fas fa-clock me-1"></i> Joined {{ user.created_at.strftime('%B %d, %Y') }}
+                            </p>
+                            {% if user.bio %}
+                            <p class="card-text small">{{ user.bio[:100] }}{% if user.bio|length > 100 %}...{% endif %}</p>
+                            {% endif %}
+                            <div class="mt-2">
+                                <a href="{{ url_for('user_profile', username=user.username) }}" class="btn btn-sm btn-outline-primary me-2">
+                                    <i class="fas fa-user me-1"></i> View Profile
+                                </a>
+                                <form action="{{ url_for('unsubscribe', user_id=user.id) }}" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        <i class="fas fa-user-minus me-1"></i> Unsubscribe
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center p-4">
+            <i class="fas fa-users fa-3x mb-3 text-muted"></i>
+            <p>You are not subscribed to any users yet.</p>
+            <a href="{{ url_for('index') }}" class="btn btn-primary">
+                <i class="fas fa-home me-1"></i> Explore Feed
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

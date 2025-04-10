@@ -1,0 +1,445 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="card mb-4">
+    <div class="card-body">
+        <h3 class="card-title mb-3">{{ place.name }}</h3>
+        
+        {% if place.image_url %}
+        <div class="place-image mb-4">
+            <img src="{{ place.image_url }}" alt="{{ place.name }}" class="img-fluid rounded" style="max-height: 300px; width: 100%; object-fit: cover;">
+        </div>
+        {% endif %}
+        
+        <div class="d-flex flex-wrap align-items-center mb-4">
+            <div class="me-4 mb-2">
+                <i class="fas fa-map-marker-alt text-danger me-1"></i> {{ place.address }}
+            </div>
+            <div class="me-4 mb-2">
+                <i class="fas fa-user me-1"></i> Added by 
+                <a href="{{ url_for('user_profile', username=place.get_user().username) }}" class="text-decoration-none">
+                    {{ place.get_user().username }}
+                </a>
+            </div>
+            <div class="me-4 mb-2">
+                <i class="fas fa-calendar-alt me-1"></i> {{ place.created_at.strftime('%B %d, %Y') }}
+            </div>
+            
+            <div class="ms-auto">
+                <button class="btn btn-outline-secondary like-place-btn" 
+                        data-place-id="{{ place.id }}" 
+                        data-liked="{{ 'true' if current_user.is_authenticated and place.is_liked_by(current_user.id) else 'false' }}"
+                        {% if not current_user.is_authenticated %}disabled{% endif %}>
+                    <i class="fas fa-heart {{ 'text-danger' if current_user.is_authenticated and place.is_liked_by(current_user.id) }}"></i>
+                    <span class="place-likes-count">{{ place.get_likes_count() }}</span>
+                </button>
+                
+                {% if current_user.is_authenticated %}
+                <a href="{{ url_for('create_post') }}" class="btn btn-primary ms-2">
+                    <i class="fas fa-edit me-1"></i> Create Post About This Place
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        
+        <p class="card-text">{{ place.description }}</p>
+        
+        <div id="placeMap" style="height: 400px; width: 100%;" class="rounded mb-3"></div>
+    </div>
+</div>
+
+<ul class="nav nav-tabs mb-4" id="placeTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="posts-tab" data-bs-toggle="tab" data-bs-target="#posts" type="button" role="tab" aria-controls="posts" aria-selected="true">
+            <i class="fas fa-newspaper me-1"></i> Posts
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="comments-tab" data-bs-toggle="tab" data-bs-target="#comments" type="button" role="tab" aria-controls="comments" aria-selected="false">
+            <i class="fas fa-comments me-1"></i> Comments
+        </button>
+    </li>
+</ul>
+
+<div class="tab-content" id="placeTabContent">
+    <!-- Posts Tab -->
+    <div class="tab-pane fade show active" id="posts" role="tabpanel" aria-labelledby="posts-tab">
+        {% if posts %}
+        <div class="card">
+            <div class="card-body p-0">
+                {% for post in posts %}
+                <div class="post-item p-3 {% if not loop.last %}border-bottom{% endif %}">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div class="d-flex align-items-center">
+                            <a href="{{ url_for('user_profile', username=post.get_user().username) }}" class="me-2">
+                                <img src="{{ post.get_user().avatar }}" alt="{{ post.get_user().username }}" class="avatar rounded-circle">
+                            </a>
+                            <div>
+                                <a href="{{ url_for('user_profile', username=post.get_user().username) }}" class="text-decoration-none fw-bold">{{ post.get_user().username }}</a>
+                                <div class="text-muted small">
+                                    <i class="fas fa-clock me-1"></i> {{ post.created_at.strftime('%B %d, %Y') }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h5 class="card-title">{{ post.title }}</h5>
+                    <p class="card-text">{{ post.content }}</p>
+                    
+                    {% if post.media_files %}
+                    <div class="media-gallery mb-3">
+                        {% set media_list = post.media_files|from_json %}
+                        {% if media_list %}
+                            {% for media_url in media_list %}
+                                <div class="media-item mb-2">
+                                    {% if media_url.endswith('.jpg') or media_url.endswith('.jpeg') or media_url.endswith('.png') or media_url.endswith('.gif') or media_url.endswith('.webp') %}
+                                        <img src="{{ media_url }}" alt="Post media" class="img-fluid rounded">
+                                    {% elif media_url.endswith('.mp4') or media_url.endswith('.webm') or media_url.endswith('.ogg') %}
+                                        <video controls class="w-100 rounded">
+                                            <source src="{{ media_url }}" type="video/{{ media_url.split('.')[-1] }}">
+                                            Your browser does not support the video tag.
+                                        </video>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    {% elif post.image_url %}
+                    <div class="post-image mb-3">
+                        <img src="{{ post.image_url }}" alt="{{ post.title }}" class="img-fluid rounded">
+                    </div>
+                    {% endif %}
+                    
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <div class="post-actions">
+                            <button class="btn btn-sm btn-outline-secondary me-2 like-btn" 
+                                    data-post-id="{{ post.id }}" 
+                                    data-liked="{{ 'true' if current_user.is_authenticated and post.is_liked_by(current_user.id) else 'false' }}"
+                                    {% if not current_user.is_authenticated %}disabled{% endif %}>
+                                <i class="fas fa-heart {{ 'text-danger' if current_user.is_authenticated and post.is_liked_by(current_user.id) }}"></i>
+                                <span class="likes-count">{{ post.get_likes_count() }}</span>
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary comment-btn" data-post-id="{{ post.id }}">
+                                <i class="fas fa-comment"></i>
+                                <span class="comments-count">{{ post.get_comments()|length }}</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Comment section (initially hidden) -->
+                    <div class="comments-section mt-3 d-none" id="comments-{{ post.id }}">
+                        <hr>
+                        <h6 class="mb-3"><i class="fas fa-comments me-2"></i> Comments</h6>
+                        
+                        <div class="comments-list">
+                            {% for comment in post.get_comments() %}
+                            <div class="comment-item d-flex mb-3">
+                                <a href="{{ url_for('user_profile', username=comment.get_user().username) }}" class="me-2">
+                                    <img src="{{ comment.get_user().avatar }}" alt="{{ comment.get_user().username }}" class="avatar avatar-sm rounded-circle">
+                                </a>
+                                <div class="comment-content">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <a href="{{ url_for('user_profile', username=comment.get_user().username) }}" class="text-decoration-none fw-bold">{{ comment.get_user().username }}</a>
+                                        <small class="text-muted">{{ comment.created_at.strftime('%B %d, %Y') }}</small>
+                                    </div>
+                                    <p class="mb-0">{{ comment.content }}</p>
+                                </div>
+                            </div>
+                            {% else %}
+                            <p class="text-muted">No comments yet. Be the first to comment!</p>
+                            {% endfor %}
+                        </div>
+                        
+                        {% if current_user.is_authenticated %}
+                        <form class="comment-form mt-3" data-post-id="{{ post.id }}">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Add a comment..." required>
+                                <button class="btn btn-primary" type="submit">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </form>
+                        {% else %}
+                        <div class="alert alert-info mt-3">
+                            <a href="{{ url_for('login') }}" class="alert-link">Log in</a> to post a comment.
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% else %}
+        <div class="text-center p-4">
+            <i class="fas fa-newspaper fa-3x mb-3 text-muted"></i>
+            <p>No posts about this place yet.</p>
+            {% if current_user.is_authenticated %}
+            <a href="{{ url_for('create_post') }}" class="btn btn-primary">
+                <i class="fas fa-edit me-1"></i> Create Post
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Comments Tab -->
+    <div class="tab-pane fade" id="comments" role="tabpanel" aria-labelledby="comments-tab">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="mb-4">What people say about this place</h5>
+                
+                <div class="comments-list">
+                    {% for comment in comments %}
+                    <div class="comment-item d-flex mb-4">
+                        <a href="{{ url_for('user_profile', username=comment.get_user().username) }}" class="me-2">
+                            <img src="{{ comment.get_user().avatar }}" alt="{{ comment.get_user().username }}" class="avatar rounded-circle">
+                        </a>
+                        <div class="comment-content">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <a href="{{ url_for('user_profile', username=comment.get_user().username) }}" class="text-decoration-none fw-bold">{{ comment.get_user().username }}</a>
+                                <small class="text-muted">{{ comment.created_at.strftime('%B %d, %Y') }}</small>
+                            </div>
+                            <p class="mt-2">{{ comment.content }}</p>
+                        </div>
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No comments about this place yet. Be the first to comment!</p>
+                    {% endfor %}
+                </div>
+                
+                {% if current_user.is_authenticated %}
+                <hr class="my-4">
+                <h5 class="mb-3">Add Your Comment</h5>
+                <form method="post" action="{{ url_for('comment_place', place_id=place.id) }}" id="placeCommentForm">
+                    {{ comment_form.hidden_tag() }}
+                    <div class="mb-3">
+                        {{ comment_form.content(class="form-control", rows=3, placeholder="Write your comment here...") }}
+                    </div>
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane me-1"></i> Post Comment
+                        </button>
+                    </div>
+                </form>
+                {% else %}
+                <div class="alert alert-info mt-4">
+                    <a href="{{ url_for('login') }}" class="alert-link">Log in</a> to add a comment about this place.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize the map
+        const map = L.map('placeMap').setView([{{ place.latitude }}, {{ place.longitude }}], 15);
+        
+        // Add the OpenStreetMap tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+        
+        // Add a marker for the place
+        L.marker([{{ place.latitude }}, {{ place.longitude }}])
+            .addTo(map)
+            .bindPopup("{{ place.name }}")
+            .openPopup();
+            
+        // Add like functionality
+        const likeBtns = document.querySelectorAll('.like-place-btn');
+        likeBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (btn.disabled) return;
+                
+                const placeId = this.getAttribute('data-place-id');
+                const isLiked = this.getAttribute('data-liked') === 'true';
+                const icon = this.querySelector('i');
+                const likesCount = this.querySelector('.place-likes-count');
+                
+                fetch(`/like_place/${placeId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.action === 'liked') {
+                        icon.classList.add('text-danger');
+                        this.setAttribute('data-liked', 'true');
+                    } else {
+                        icon.classList.remove('text-danger');
+                        this.setAttribute('data-liked', 'false');
+                    }
+                    likesCount.textContent = data.likes_count;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+        });
+        
+        // Comment form submission
+        const placeCommentForm = document.getElementById('placeCommentForm');
+        if (placeCommentForm) {
+            placeCommentForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(this);
+                
+                fetch(this.action, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Add the new comment to the list
+                        const commentsList = document.querySelector('.comments-list');
+                        const emptyMessage = commentsList.querySelector('p.text-muted');
+                        if (emptyMessage) {
+                            emptyMessage.remove();
+                        }
+                        
+                        const comment = data.comment;
+                        const commentHtml = `
+                            <div class="comment-item d-flex mb-4">
+                                <a href="/user/${comment.user.username}" class="me-2">
+                                    <img src="${comment.user.avatar}" alt="${comment.user.username}" class="avatar rounded-circle">
+                                </a>
+                                <div class="comment-content">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <a href="/user/${comment.user.username}" class="text-decoration-none fw-bold">${comment.user.username}</a>
+                                        <small class="text-muted">${comment.created_at}</small>
+                                    </div>
+                                    <p class="mt-2">${comment.content}</p>
+                                </div>
+                            </div>
+                        `;
+                        
+                        commentsList.insertAdjacentHTML('beforeend', commentHtml);
+                        
+                        // Clear the form
+                        this.reset();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+        }
+        
+        // Post like and comment functionality
+        const likeBtnsPosts = document.querySelectorAll('.like-btn');
+        likeBtnsPosts.forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (btn.disabled) return;
+                
+                const postId = this.getAttribute('data-post-id');
+                const isLiked = this.getAttribute('data-liked') === 'true';
+                const icon = this.querySelector('i');
+                const likesCount = this.querySelector('.likes-count');
+                
+                fetch(`/like_post/${postId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.action === 'liked') {
+                        icon.classList.add('text-danger');
+                        this.setAttribute('data-liked', 'true');
+                    } else {
+                        icon.classList.remove('text-danger');
+                        this.setAttribute('data-liked', 'false');
+                    }
+                    likesCount.textContent = data.likes_count;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+        });
+        
+        const commentBtns = document.querySelectorAll('.comment-btn');
+        commentBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const postId = this.getAttribute('data-post-id');
+                const commentsSection = document.getElementById(`comments-${postId}`);
+                
+                if (commentsSection.classList.contains('d-none')) {
+                    commentsSection.classList.remove('d-none');
+                } else {
+                    commentsSection.classList.add('d-none');
+                }
+            });
+        });
+        
+        const commentForms = document.querySelectorAll('.comment-form');
+        commentForms.forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const postId = this.getAttribute('data-post-id');
+                const input = this.querySelector('input');
+                const content = input.value;
+                
+                if (content.trim() === '') return;
+                
+                const formData = new FormData();
+                formData.append('content', content);
+                
+                fetch(`/comment_post/${postId}`, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Add the new comment to the list
+                        const commentsList = document.querySelector(`#comments-${postId} .comments-list`);
+                        const emptyMessage = commentsList.querySelector('p.text-muted');
+                        if (emptyMessage) {
+                            emptyMessage.remove();
+                        }
+                        
+                        const comment = data.comment;
+                        const commentHtml = `
+                            <div class="comment-item d-flex mb-3">
+                                <a href="/user/${comment.user.username}" class="me-2">
+                                    <img src="${comment.user.avatar}" alt="${comment.user.username}" class="avatar avatar-sm rounded-circle">
+                                </a>
+                                <div class="comment-content">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <a href="/user/${comment.user.username}" class="text-decoration-none fw-bold">${comment.user.username}</a>
+                                        <small class="text-muted">${comment.created_at}</small>
+                                    </div>
+                                    <p class="mb-0">${comment.content}</p>
+                                </div>
+                            </div>
+                        `;
+                        
+                        commentsList.insertAdjacentHTML('beforeend', commentHtml);
+                        
+                        // Update the comments count
+                        const commentsCount = document.querySelector(`button[data-post-id="${postId}"] .comments-count`);
+                        commentsCount.textContent = parseInt(commentsCount.textContent) + 1;
+                        
+                        // Clear the input
+                        input.value = '';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+        });
+    });
+</script>
+{% endblock %}
