@@ -10,6 +10,7 @@ from helpers import (get_popular_places, allowed_file, save_image,
 from datetime import datetime
 
 
+
 # Home page route
 @app.route('/')
 def index():
@@ -20,10 +21,11 @@ def index():
     popular_places = get_popular_places(5)
 
     return render_template('index.html',
-                           title="Home",
+                           title="Главная",
                            posts=posts_data,
                            popular_places=popular_places,
-                           page=page)
+                           page=page,
+                           comment_form=CommentForm())
 
 
 # API for loading more posts
@@ -83,7 +85,7 @@ def user_profile(username):
     popular_places = get_popular_places(5)
 
     return render_template('profile.html',
-                           title=f"{username}'s Profile",
+                           title=f"Пользователь {username}",
                            user=user,
                            posts=user_posts,
                            liked_places=liked_places,
@@ -98,7 +100,7 @@ def subscriptions():
     popular_places = get_popular_places(5)
 
     return render_template('subscriptions.html',
-                           title="My Subscriptions",
+                           title="Подписки",
                            subscribed_users=subscribed_users,
                            popular_places=popular_places)
 
@@ -109,14 +111,14 @@ def subscriptions():
 def subscribe(user_id):
     user_to_subscribe = User.get_by_id(user_id)
     if user_to_subscribe is None:
-        flash('User not found.', 'danger')
+        flash('Пользователь не найден.', 'danger')
         return redirect(url_for('index'))
 
     if user_id == current_user.id:
-        flash('You cannot subscribe to yourself.', 'warning')
+        flash('Вы не можете подписаться на себя.', 'warning')
     else:
         current_user.subscribe(user_id)
-        flash(f'You are now subscribed to {user_to_subscribe.username}.', 'success')
+        flash(f'Вы подписались на {user_to_subscribe.username}.', 'success')
 
     return redirect(request.referrer or url_for('index'))
 
@@ -126,11 +128,11 @@ def subscribe(user_id):
 def unsubscribe(user_id):
     user_to_unsubscribe = User.get_by_id(user_id)
     if user_to_unsubscribe is None:
-        flash('User not found.', 'danger')
+        flash('Пользователь не найден', 'danger')
         return redirect(url_for('index'))
 
     current_user.unsubscribe(user_id)
-    flash(f'You have unsubscribed from {user_to_unsubscribe.username}.', 'success')
+    flash(f'Вы отписались от {user_to_unsubscribe.username}.', 'success')
 
     return redirect(request.referrer or url_for('index'))
 
@@ -147,7 +149,7 @@ def places():
     popular_places = get_popular_places(5)
 
     return render_template('places.html',
-                           title="Places",
+                           title="Места",
                            top_places=top_places,
                            places=places_data,
                            popular_places=popular_places,
@@ -224,12 +226,12 @@ def add_place():
             current_user.id,
             place_image_url
         )
-        flash('New place has been added successfully!', 'success')
+        flash('Вы добавили новое место!', 'success')
         return redirect(url_for('place', place_id=place.id))
 
     popular_places = get_popular_places(5)
     return render_template('places.html',
-                           title="Add Place",
+                           title="Добавить место",
                            form=form,
                            popular_places=popular_places,
                            show_form=True)
@@ -254,12 +256,12 @@ def create_post():
             int(form.place_id.data),
             media_files
         )
-        flash('Your post has been created successfully!', 'success')
+        flash('Вы создали публикацию!', 'success')
         return redirect(url_for('index'))
 
     popular_places = get_popular_places(5)
     return render_template('create_post.html',
-                           title="Create Post",
+                           title="Создать публикацию",
                            form=form,
                            places=all_places,
                            popular_places=popular_places)
@@ -274,7 +276,7 @@ def login():
     if form.validate_on_submit():
         user = User.get_by_email(form.email.data)
         if user is None or not user.check_password(form.password.data):
-            flash('Invalid email or password', 'danger')
+            flash('Неверный адрес эл. почты или пароль', 'danger')
             return redirect(url_for('login'))
 
         login_user(user, remember=form.remember_me.data)
@@ -282,12 +284,12 @@ def login():
         if not next_page or urlparse(next_page).netloc != '':
             next_page = url_for('index')
 
-        flash('You have been logged in successfully!', 'success')
+        flash('Вы успешно авторизовались!', 'success')
         return redirect(next_page)
 
     popular_places = get_popular_places(5)
     return render_template('auth.html',
-                           title="Login",
+                           title="Авторизация",
                            form=form,
                            auth_type="login",
                            popular_places=popular_places)
@@ -301,11 +303,11 @@ def register():
     form = RegisterForm()
     if form.validate_on_submit():
         if User.get_by_username(form.username.data):
-            flash('Username already exists. Please choose a different one.', 'danger')
+            flash('Учётная запись с этим именем пользователя уже существует.', 'danger')
             return redirect(url_for('register'))
 
         if User.get_by_email(form.email.data):
-            flash('Email already registered. Please use a different one.', 'danger')
+            flash('Учётная запись с этим адресом эл. почты уже существует.', 'danger')
             return redirect(url_for('register'))
         avatar = None
         if form.avatar.data:
@@ -319,12 +321,12 @@ def register():
             avatar
         )
 
-        flash('Registration successful! You can now log in.', 'success')
+        flash('Вы успешно зарегистрировались!', 'success')
         return redirect(url_for('login'))
 
     popular_places = get_popular_places(5)
     return render_template('auth.html',
-                           title="Register",
+                           title="Регистрация",
                            form=form,
                            auth_type="register",
                            popular_places=popular_places)
@@ -333,7 +335,7 @@ def register():
 @app.route('/logout')
 def logout():
     logout_user()
-    flash('You have been logged out successfully.', 'success')
+    flash('Вы вышли из своей учётной записи.', 'success')
     return redirect(url_for('index'))
 
 
@@ -345,15 +347,15 @@ def edit_profile():
     if form.validate_on_submit():
         user = current_user
         user.username = form.username.data
-        user.bio = form.bio.data
+        user.set_bio(form.bio.data)
 
         # Handle profile picture upload
         if form.avatar.data:
             avatar_url = save_profile_image(form.avatar.data)
             if avatar_url:
-                user.avatar = avatar_url
+                user.set_avatar(avatar_url)
 
-        flash('Your profile has been updated successfully!', 'success')
+        flash('Данные профиля обновлены.', 'success')
         return redirect(url_for('user_profile', username=user.username))
     elif request.method == 'GET':
         form.username.data = current_user.username
@@ -361,7 +363,7 @@ def edit_profile():
 
     popular_places = get_popular_places(5)
     return render_template('edit_profile.html',
-                           title="Edit Profile",
+                           title="Редактировать профиль",
                            form=form,
                            popular_places=popular_places)
 
@@ -413,6 +415,7 @@ def comment_post(post_id):
         return jsonify({'error': 'Post not found'}), 404
 
     form = CommentForm()
+    print(form.content, form.validate_on_submit(), form.errors)
     if form.validate_on_submit():
         comment = Comment.create(
             form.content.data,
@@ -447,6 +450,7 @@ def comment_place(place_id):
         return jsonify({'error': 'Place not found'}), 404
 
     form = CommentForm()
+    print(form.content, form.validate_on_submit(), form.errors)
     if form.validate_on_submit():
         comment = Comment.create(
             form.content.data,

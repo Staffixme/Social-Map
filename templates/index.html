@@ -3,7 +3,7 @@
 {% block content %}
 <div class="card mb-4">
     <div class="card-header">
-        <h5 class="mb-0"><i class="fas fa-stream me-2"></i> Latest Posts</h5>
+        <h5>Лента публикаций</h5>
     </div>
     <div class="card-body p-0">
         <div id="postsContainer">
@@ -34,12 +34,12 @@
                     {% if media_list %}
                         {% for media_url in media_list %}
                             <div class="media-item mb-2">
-                                {% if media_url.endswith('.jpg') or media_url.endswith('.jpeg') or media_url.endswith('.png') or media_url.endswith('.gif') or media_url.endswith('.webp') %}
-                                    <img src="{{ media_url }}" alt="Post media" class="img-fluid rounded">
-                                {% elif media_url.endswith('.mp4') or media_url.endswith('.webm') or media_url.endswith('.ogg') %}
+                                {% if media_url["url"].endswith('.jpg') or media_url["url"].endswith('.jpeg') or media_url["url"].endswith('.png') or media_url["url"].endswith('.gif') or media_url["url"].endswith('.webp') %}
+                                    <img src="{{ media_url['url'] }}" alt="Post media" class="img-fluid rounded">
+                                {% elif media_url["url"].endswith('.mp4') or media_url["url"].endswith('.webm') or media_url["url"].endswith('.ogg') %}
                                     <video controls class="w-100 rounded">
-                                        <source src="{{ media_url }}" type="video/{{ media_url.split('.')[-1] }}">
-                                        Your browser does not support the video tag.
+                                        <source src="{{ media_url['url'] }}" type="video/{{ media_url['url'].split('.')[-1] }}">
+                                        Ваш браузер не поддерживает воспроизведение видео.
                                     </video>
                                 {% endif %}
                             </div>
@@ -67,14 +67,14 @@
                         </button>
                     </div>
                     <a href="{{ url_for('place', place_id=post.place_id) }}" class="btn btn-sm btn-outline-primary">
-                        <i class="fas fa-map-marked-alt me-1"></i> View Place
+                        <i class="fas fa-map-marked-alt me-1"></i> Перейти к месту
                     </a>
                 </div>
                 
                 <!-- Comment section (initially hidden) -->
                 <div class="comments-section mt-3 d-none" id="comments-{{ post.id }}">
                     <hr>
-                    <h6 class="mb-3"><i class="fas fa-comments me-2"></i> Comments</h6>
+                    <h6 class="mb-3"><i class="fas fa-comments me-2"></i>Обсуждение</h6>
                     
                     <div class="comments-list">
                         {% for comment in post.get_comments() %}
@@ -91,14 +91,14 @@
                             </div>
                         </div>
                         {% else %}
-                        <p class="text-muted">No comments yet. Be the first to comment!</p>
+                        <p class="text-muted">Пусто. Оставьте первый комментарий!</p>
                         {% endfor %}
                     </div>
                     
                     {% if current_user.is_authenticated %}
                     <form class="comment-form mt-3" data-post-id="{{ post.id }}">
                         <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Add a comment..." required>
+                            <input type="text" class="form-control" placeholder="Напишите комментарий..." required>
                             <button class="btn btn-primary" type="submit">
                                 <i class="fas fa-paper-plane"></i>
                             </button>
@@ -106,7 +106,7 @@
                     </form>
                     {% else %}
                     <div class="alert alert-info mt-3">
-                        <a href="{{ url_for('login') }}" class="alert-link">Log in</a> to post a comment.
+                        <a href="{{ url_for('login') }}" class="alert-link">Войдите</a>, чтобы комментировать.
                     </div>
                     {% endif %}
                 </div>
@@ -114,10 +114,10 @@
             {% else %}
             <div class="text-center p-4">
                 <i class="fas fa-newspaper fa-3x mb-3 text-muted"></i>
-                <p>No posts yet. Be the first to share something!</p>
+                <p>Тут совсем пусто... Создайте первую публикацию!</p>
                 {% if current_user.is_authenticated %}
                 <a href="{{ url_for('create_post') }}" class="btn btn-primary">
-                    <i class="fas fa-edit me-1"></i> Create Post
+                    <i class="fas fa-edit me-1"></i> Создать публикацию
                 </a>
                 {% endif %}
             </div>
@@ -127,7 +127,7 @@
         {% if posts %}
         <div id="loadingPosts" class="text-center p-3 d-none">
             <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
+                <span class="visually-hidden">Загрузка...</span>
             </div>
         </div>
         {% endif %}

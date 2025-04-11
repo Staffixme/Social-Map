@@ -5,9 +5,9 @@
     <div class="card-header">
         <h5 class="mb-0">
             {% if auth_type == "login" %}
-            <i class="fas fa-sign-in-alt me-2"></i> Login to Your Account
+            <i class="fas fa-sign-in-alt me-2"></i> Вход
             {% else %}
-            <i class="fas fa-user-plus me-2"></i> Create a New Account
+            <i class="fas fa-user-plus me-2"></i> Регистрация
             {% endif %}
         </h5>
     </div>
@@ -18,7 +18,7 @@
             {% if auth_type == "register" %}
             <div class="mb-3">
                 {{ form.username.label(class="form-label") }}
-                {{ form.username(class="form-control" + (" is-invalid" if form.username.errors else ""), placeholder="Choose a username") }}
+                {{ form.username(class="form-control" + (" is-invalid" if form.username.errors else ""), placeholder="Введите имя пользователя") }}
                 {% for error in form.username.errors %}
                 <div class="invalid-feedback">{{ error }}</div>
                 {% endfor %}
@@ -27,7 +27,7 @@
             
             <div class="mb-3">
                 {{ form.email.label(class="form-label") }}
-                {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else ""), placeholder="Enter your email address") }}
+                {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else ""), placeholder="Введите email") }}
                 {% for error in form.email.errors %}
                 <div class="invalid-feedback">{{ error }}</div>
                 {% endfor %}
@@ -35,7 +35,7 @@
             
             <div class="mb-3">
                 {{ form.password.label(class="form-label") }}
-                {{ form.password(class="form-control" + (" is-invalid" if form.password.errors else ""), placeholder="Enter your password") }}
+                {{ form.password(class="form-control" + (" is-invalid" if form.password.errors else ""), placeholder="Придумайте пароль") }}
                 {% for error in form.password.errors %}
                 <div class="invalid-feedback">{{ error }}</div>
                 {% endfor %}
@@ -44,7 +44,7 @@
             {% if auth_type == "register" %}
             <div class="mb-3">
                 {{ form.password2.label(class="form-label") }}
-                {{ form.password2(class="form-control" + (" is-invalid" if form.password2.errors else ""), placeholder="Confirm your password") }}
+                {{ form.password2(class="form-control" + (" is-invalid" if form.password2.errors else ""), placeholder="Подтвердите пароль") }}
                 {% for error in form.password2.errors %}
                 <div class="invalid-feedback">{{ error }}</div>
                 {% endfor %}
@@ -52,7 +52,7 @@
             
             <div class="mb-3">
                 {{ form.bio.label(class="form-label") }}
-                {{ form.bio(class="form-control" + (" is-invalid" if form.bio.errors else ""), rows=3, placeholder="Tell us about yourself (optional)") }}
+                {{ form.bio(class="form-control" + (" is-invalid" if form.bio.errors else ""), rows=3, placeholder="Описание профиля (необязательно)") }}
                 {% for error in form.bio.errors %}
                 <div class="invalid-feedback">{{ error }}</div>
                 {% endfor %}
@@ -73,9 +73,9 @@
     </div>
     <div class="card-footer text-center">
         {% if auth_type == "login" %}
-        Don't have an account? <a href="{{ url_for('register') }}">Register</a>
+        Ещё нет аккаунта? <a href="{{ url_for('register') }}">Создайте бесплатно</a>
         {% else %}
-        Already have an account? <a href="{{ url_for('login') }}">Login</a>
+        Уже есть аккаунт? <a href="{{ url_for('login') }}">Войдите</a>
         {% endif %}
     </div>
 </div>

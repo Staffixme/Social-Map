@@ -5,7 +5,7 @@
 <!-- Add Place Form -->
 <div class="card mb-4">
     <div class="card-header">
-        <h5 class="mb-0"><i class="fas fa-plus-circle me-2"></i> Add New Place</h5>
+        <h5 class="mb-0">Добавить место в SocialMap</h5>
     </div>
     <div class="card-body">
         <form method="post" action="{{ url_for('add_place') }}" enctype="multipart/form-data">
@@ -38,7 +38,7 @@
             <div class="mb-3">
                 {{ form.place_image.label(class="form-label") }}
                 {{ form.place_image(class="form-control" + (" is-invalid" if form.place_image.errors else ""), accept="image/*", id="placeImage") }}
-                <div class="form-text">Upload an image for this place (optional)</div>
+                <div class="form-text">Прикрепите изображение к этому месту</div>
                 {% for error in form.place_image.errors %}
                 <div class="invalid-feedback">{{ error }}</div>
                 {% endfor %}
@@ -65,9 +65,9 @@
             </div>
             
             <div class="mb-3">
-                <label class="form-label">Select Location on Map</label>
+                <label class="form-label">Выберите место на карте</label>
                 <div id="map" style="height: 400px" class="rounded"></div>
-                <small class="text-muted">Click on the map to set the coordinates.</small>
+                <small class="text-muted">Нажмите на карту, чтобы задать координаты.</small>
             </div>
             
             <div class="text-end">
@@ -81,10 +81,10 @@
 <!-- Top Places -->
 <div class="card mb-4">
     <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="mb-0"><i class="fas fa-award me-2 text-warning"></i> Top Places</h5>
+        <h5 class="mb-0"><i class="fas fa-award me-2 text-warning"></i> Топ лучших мест</h5>
         {% if current_user.is_authenticated %}
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPlaceModal">
-            <i class="fas fa-plus-circle me-1"></i> Add Place
+            <i class="fas fa-plus-circle me-1"></i> Добавить место
         </button>
         {% endif %}
     </div>
@@ -116,7 +116,7 @@
                                         </span>
                                     </div>
                                     <a href="{{ url_for('place', place_id=place.id) }}" class="btn btn-sm btn-outline-primary">
-                                        <i class="fas fa-info-circle me-1"></i> Details
+                                        <i class="fas fa-info-circle me-1"></i> Подробнее
                                     </a>
                                 </div>
                             </div>
@@ -141,7 +141,7 @@
 <!-- All Places -->
 <div class="card">
     <div class="card-header">
-        <h5 class="mb-0"><i class="fas fa-map-marked-alt me-2"></i> All Places</h5>
+        <h5 class="mb-0"><i class="fas fa-map-marked-alt me-2"></i> Все места</h5>
     </div>
     <div class="card-body">
         <div class="row row-cols-1 row-cols-md-2 g-4" id="placesContainer">
@@ -175,10 +175,10 @@
                     </div>
                     <div class="card-footer d-flex justify-content-between align-items-center">
                         <small class="text-muted">
-                            Added by <a href="{{ url_for('user_profile', username=place.get_user().username) }}" class="text-decoration-none">{{ place.get_user().username }}</a>
+                            Добавлено <a href="{{ url_for('user_profile', username=place.get_user().username) }}" class="text-decoration-none">{{ place.get_user().username }}</a>
                         </small>
                         <a href="{{ url_for('place', place_id=place.id) }}" class="btn btn-sm btn-outline-primary">
-                            <i class="fas fa-info-circle me-1"></i> Details
+                            <i class="fas fa-info-circle me-1"></i> Подробнее
                         </a>
                     </div>
                 </div>
@@ -188,7 +188,7 @@
         
         <div id="loadingPlaces" class="text-center p-3 mt-4 d-none">
             <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
+                <span class="visually-hidden">Загрузка...</span>
             </div>
         </div>
     </div>
@@ -199,7 +199,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addPlaceModalLabel">Add New Place</h5>
+                <h5 class="modal-title" id="addPlaceModalLabel">Добавить место в SocialMap</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -207,24 +207,24 @@
                     {{ form.hidden_tag() if form }}
                     
                     <div class="mb-3">
-                        <label for="name" class="form-label">Name</label>
+                        <label for="name" class="form-label">Навание</label>
                         <input type="text" class="form-control" id="name" name="name" required>
                     </div>
                     
                     <div class="mb-3">
-                        <label for="description" class="form-label">Description</label>
+                        <label for="description" class="form-label">Описание</label>
                         <textarea class="form-control" id="description" name="description" rows="4" required></textarea>
                     </div>
                     
                     <div class="mb-3">
-                        <label for="address" class="form-label">Address</label>
+                        <label for="address" class="form-label">Полный адрес</label>
                         <input type="text" class="form-control" id="address" name="address" required>
                     </div>
                     
                     <div class="mb-3">
-                        <label for="place_image" class="form-label">Place Image</label>
-                        <input type="file" class="form-control" id="modalPlaceImage" name="place_image" accept="image/*">
-                        <div class="form-text">Upload an image for this place (optional)</div>
+                        <label for="place_image" class="form-label">Добавить изображение</label>
+                        <input type="file" class="form-control" id="modalPlaceImage" name="place_image" accept="image/*" required>
+                        <div class="form-text">Прикрепите изображение к этому месту</div>
                         <div class="mt-2" id="modalImagePreview" style="display: none; max-width: 300px;">
                             <img src="" alt="Preview" class="img-fluid rounded">
                         </div>
@@ -232,25 +232,25 @@
                     
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="latitude" class="form-label">Latitude</label>
+                            <label for="latitude" class="form-label">Широта</label>
                             <input type="number" class="form-control" id="latitude" name="latitude" step="any" required>
                         </div>
                         <div class="col-md-6">
-                            <label for="longitude" class="form-label">Longitude</label>
+                            <label for="longitude" class="form-label">Долгота</label>
                             <input type="number" class="form-control" id="longitude" name="longitude" step="any" required>
                         </div>
                     </div>
                     
                     <div class="mb-3">
-                        <label class="form-label">Select Location on Map</label>
+                        <label class="form-label">Выберите место на карте</label>
                         <div id="modalMap" style="height: 400px" class="rounded"></div>
-                        <small class="text-muted">Click on the map to set the coordinates.</small>
+                        <small class="text-muted">Нажмите на карту, чтобы задать координаты.</small>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="submit" class="btn btn-primary" form="addPlaceForm">Add Place</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <button type="submit" class="btn btn-primary" form="addPlaceForm">Добавить</button>
             </div>
         </div>
     </div>

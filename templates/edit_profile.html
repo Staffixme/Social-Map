@@ -3,7 +3,7 @@
 {% block content %}
 <div class="card">
     <div class="card-header">
-        <h5 class="mb-0"><i class="fas fa-user-edit me-2"></i> Edit Your Profile</h5>
+        <h5 class="mb-0">Редактировать профиль</h5>
     </div>
     <div class="card-body">
         <div class="row mb-4">
@@ -14,7 +14,7 @@
                 <h5>{{ current_user.username }}</h5>
                 <p class="text-muted">
                     <i class="fas fa-envelope me-1"></i> {{ current_user.email }}<br>
-                    <i class="fas fa-calendar-alt me-1"></i> Joined {{ current_user.created_at.strftime('%B %d, %Y') }}
+                    <i class="fas fa-calendar-alt me-1"></i> Зарегистрировался {{ current_user.created_at.strftime('%B %d, %Y') }}
                 </p>
             </div>
         </div>
@@ -33,7 +33,7 @@
             <div class="mb-3">
                 {{ form.bio.label(class="form-label") }}
                 {{ form.bio(class="form-control" + (" is-invalid" if form.bio.errors else ""), rows=4) }}
-                <div class="form-text">Tell others about yourself.</div>
+                <div class="form-text">Расскажите о себе.</div>
                 {% for error in form.bio.errors %}
                 <div class="invalid-feedback">{{ error }}</div>
                 {% endfor %}
@@ -42,14 +42,14 @@
             <div class="mb-3">
                 {{ form.avatar.label(class="form-label") }}
                 {{ form.avatar(class="form-control" + (" is-invalid" if form.avatar.errors else "")) }}
-                <div class="form-text">Enter a URL for your profile picture.</div>
+                <div class="form-text">Прикрепите изображение с вашего устройства.</div>
                 {% for error in form.avatar.errors %}
                 <div class="invalid-feedback">{{ error }}</div>
                 {% endfor %}
             </div>
             
             <div class="text-end">
-                <a href="{{ url_for('user_profile', username=current_user.username) }}" class="btn btn-outline-secondary me-2">Cancel</a>
+                <a href="{{ url_for('user_profile', username=current_user.username) }}" class="btn btn-outline-secondary me-2">Отмена</a>
                 {{ form.submit(class="btn btn-primary") }}
             </div>
         </form>

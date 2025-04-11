@@ -3,7 +3,7 @@
 {% block content %}
 <div class="card mb-4">
     <div class="card-header">
-        <h5 class="mb-0"><i class="fas fa-users me-2"></i> My Subscriptions</h5>
+        <h5 class="mb-0">Мои подписки</h5>
     </div>
     <div class="card-body">
         {% if subscribed_users %}
@@ -25,11 +25,11 @@
                             {% endif %}
                             <div class="mt-2">
                                 <a href="{{ url_for('user_profile', username=user.username) }}" class="btn btn-sm btn-outline-primary me-2">
-                                    <i class="fas fa-user me-1"></i> View Profile
+                                    <i class="fas fa-user me-1"></i> Открыть профиль
                                 </a>
                                 <form action="{{ url_for('unsubscribe', user_id=user.id) }}" method="post" class="d-inline">
                                     <button type="submit" class="btn btn-sm btn-outline-danger">
-                                        <i class="fas fa-user-minus me-1"></i> Unsubscribe
+                                        <i class="fas fa-user-minus me-1"></i> Отписаться
                                     </button>
                                 </form>
                             </div>
@@ -42,9 +42,9 @@
         {% else %}
         <div class="text-center p-4">
             <i class="fas fa-users fa-3x mb-3 text-muted"></i>
-            <p>You are not subscribed to any users yet.</p>
+            <p>Вы еще ни на кого не подписаны. Самое время это исправить!</p>
             <a href="{{ url_for('index') }}" class="btn btn-primary">
-                <i class="fas fa-home me-1"></i> Explore Feed
+                <i class="fas fa-home me-1"></i> На главную
             </a>
         </div>
         {% endif %}

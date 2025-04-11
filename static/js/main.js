@@ -65,7 +65,7 @@ function setupNotifications() {
                 notificationsContainer.innerHTML = '';
                 
                 if (!data || data.length === 0) {
-                    notificationsContainer.innerHTML = '<div class="text-center p-3">No notifications yet.</div>';
+                    notificationsContainer.innerHTML = '<div class="text-center p-3">Нет уведомлений.</div>';
                     return;
                 }
                 
@@ -119,13 +119,13 @@ function setupNotifications() {
                     });
                 } catch (err) {
                     console.error('Error processing notifications data:', err);
-                    notificationsContainer.innerHTML = '<div class="text-center p-3 text-danger">Error processing notifications.</div>';
+                    notificationsContainer.innerHTML = '<div class="text-center p-3 text-danger">Что-то пошло не так.</div>';
                 }
             })
             .catch(error => {
                 console.error('Error loading notifications:', error);
                 if (notificationsContainer) {
-                    notificationsContainer.innerHTML = '<div class="text-center p-3 text-danger">Failed to load notifications.</div>';
+                    notificationsContainer.innerHTML = '<div class="text-center p-3 text-danger">Не удалось загрузить уведомления.</div>';
                 }
             });
     }
@@ -293,19 +293,19 @@ function setupCommentFunctionality() {
         commentForms.forEach(form => {
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
-                
+
                 const postId = this.getAttribute('data-post-id');
                 if (!postId) return;
-                
+
                 const input = this.querySelector('input');
                 if (!input) return;
-                
+
                 const content = input.value;
                 if (content.trim() === '') return;
-                
+
                 const formData = new FormData();
                 formData.append('content', content);
-                
+
                 fetch(`/comment_post/${postId}`, {
                     method: 'POST',
                     body: formData
@@ -322,15 +322,15 @@ function setupCommentFunctionality() {
                             // Add the new comment to the list
                             const commentsSection = document.getElementById(`comments-${postId}`);
                             if (!commentsSection) return;
-                            
+
                             const commentsList = commentsSection.querySelector('.comments-list');
                             if (!commentsList) return;
-                            
+
                             const emptyMessage = commentsList.querySelector('p.text-muted');
                             if (emptyMessage) {
                                 emptyMessage.remove();
                             }
-                            
+
                             const comment = data.comment;
                             const commentHtml = `
                                 <div class="comment-item d-flex mb-3">
@@ -346,15 +346,15 @@ function setupCommentFunctionality() {
                                     </div>
                                 </div>
                             `;
-                            
+
                             commentsList.insertAdjacentHTML('beforeend', commentHtml);
-                            
+
                             // Update the comments count
                             const commentsCountElement = document.querySelector(`button[data-post-id="${postId}"] .comments-count`);
                             if (commentsCountElement) {
                                 commentsCountElement.textContent = parseInt(commentsCountElement.textContent) + 1;
                             }
-                            
+
                             // Clear the input
                             input.value = '';
                         } catch (err) {

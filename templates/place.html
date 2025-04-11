@@ -4,19 +4,22 @@
 <div class="card mb-4">
     <div class="card-body">
         <h3 class="card-title mb-3">{{ place.name }}</h3>
-        
+
         {% if place.image_url %}
         <div class="place-image mb-4">
             <img src="{{ place.image_url }}" alt="{{ place.name }}" class="img-fluid rounded" style="max-height: 300px; width: 100%; object-fit: cover;">
         </div>
         {% endif %}
-        
+
+        <p class="card-text">{{ place.description }}</p>
+
         <div class="d-flex flex-wrap align-items-center mb-4">
             <div class="me-4 mb-2">
-                <i class="fas fa-map-marker-alt text-danger me-1"></i> {{ place.address }}
+                <i class="fas fa-map-marker-alt text-danger me-1"></i>
+                <a class="text-decoration-none" href="https://yandex.ru/maps/?whatshere[point]={{ place.longitude }},{{ place.latitude }}&whatshere[zoom]=17">{{ place.address }}</a>
             </div>
             <div class="me-4 mb-2">
-                <i class="fas fa-user me-1"></i> Added by 
+                <i class="fas fa-user me-1"></i> Добавлено
                 <a href="{{ url_for('user_profile', username=place.get_user().username) }}" class="text-decoration-none">
                     {{ place.get_user().username }}
                 </a>
@@ -24,10 +27,10 @@
             <div class="me-4 mb-2">
                 <i class="fas fa-calendar-alt me-1"></i> {{ place.created_at.strftime('%B %d, %Y') }}
             </div>
-            
+
             <div class="ms-auto">
-                <button class="btn btn-outline-secondary like-place-btn" 
-                        data-place-id="{{ place.id }}" 
+                <button class="btn btn-outline-secondary like-place-btn"
+                        data-place-id="{{ place.id }}"
                         data-liked="{{ 'true' if current_user.is_authenticated and place.is_liked_by(current_user.id) else 'false' }}"
                         {% if not current_user.is_authenticated %}disabled{% endif %}>
                     <i class="fas fa-heart {{ 'text-danger' if current_user.is_authenticated and place.is_liked_by(current_user.id) }}"></i>
@@ -36,27 +39,29 @@
                 
                 {% if current_user.is_authenticated %}
                 <a href="{{ url_for('create_post') }}" class="btn btn-primary ms-2">
-                    <i class="fas fa-edit me-1"></i> Create Post About This Place
+                    <i class="fas fa-edit me-1"></i> Создать публикацию об этом месте
                 </a>
                 {% endif %}
             </div>
         </div>
-        
-        <p class="card-text">{{ place.description }}</p>
-        
+
         <div id="placeMap" style="height: 400px; width: 100%;" class="rounded mb-3"></div>
+        <small class="text-muted">Обратите внимание, что места в SocialMap добавляются другими пользователями.
+        Перепроверяйте информацию в проверенных источниках.</small>
+
+
     </div>
 </div>
 
 <ul class="nav nav-tabs mb-4" id="placeTabs" role="tablist">
     <li class="nav-item" role="presentation">
         <button class="nav-link active" id="posts-tab" data-bs-toggle="tab" data-bs-target="#posts" type="button" role="tab" aria-controls="posts" aria-selected="true">
-            <i class="fas fa-newspaper me-1"></i> Posts
+            <i class="fas fa-newspaper me-1"></i> Публикации
         </button>
     </li>
     <li class="nav-item" role="presentation">
         <button class="nav-link" id="comments-tab" data-bs-toggle="tab" data-bs-target="#comments" type="button" role="tab" aria-controls="comments" aria-selected="false">
-            <i class="fas fa-comments me-1"></i> Comments
+            <i class="fas fa-comments me-1"></i> Обсуждение
         </button>
     </li>
 </ul>
@@ -92,12 +97,12 @@
                         {% if media_list %}
                             {% for media_url in media_list %}
                                 <div class="media-item mb-2">
-                                    {% if media_url.endswith('.jpg') or media_url.endswith('.jpeg') or media_url.endswith('.png') or media_url.endswith('.gif') or media_url.endswith('.webp') %}
-                                        <img src="{{ media_url }}" alt="Post media" class="img-fluid rounded">
-                                    {% elif media_url.endswith('.mp4') or media_url.endswith('.webm') or media_url.endswith('.ogg') %}
+                                    {% if media_url["url"].endswith('.jpg') or media_url["url"].endswith('.jpeg') or media_url["url"].endswith('.png') or media_url["url"].endswith('.gif') or media_url["url"].endswith('.webp') %}
+                                        <img src="{{ media_url['url'] }}" alt="Post media" class="img-fluid rounded">
+                                    {% elif media_url["url"].endswith('.mp4') or media_url["url"].endswith('.webm') or media_url["url"].endswith('.ogg') %}
                                         <video controls class="w-100 rounded">
-                                            <source src="{{ media_url }}" type="video/{{ media_url.split('.')[-1] }}">
-                                            Your browser does not support the video tag.
+                                            <source src="{{ media_url['url'] }}" type="video/{{ media_url['url'].split('.')[-1] }}">
+                                            Ваш браузер не поддерживает воспроизведение видео.
                                         </video>
                                     {% endif %}
                                 </div>
@@ -129,7 +134,7 @@
                     <!-- Comment section (initially hidden) -->
                     <div class="comments-section mt-3 d-none" id="comments-{{ post.id }}">
                         <hr>
-                        <h6 class="mb-3"><i class="fas fa-comments me-2"></i> Comments</h6>
+                        <h6 class="mb-3"><i class="fas fa-comments me-2"></i> Обсуждение</h6>
                         
                         <div class="comments-list">
                             {% for comment in post.get_comments() %}
@@ -146,14 +151,14 @@
                                 </div>
                             </div>
                             {% else %}
-                            <p class="text-muted">No comments yet. Be the first to comment!</p>
+                            <p class="text-muted">Пусто. Оставьте первый комментарий!</p>
                             {% endfor %}
                         </div>
                         
                         {% if current_user.is_authenticated %}
                         <form class="comment-form mt-3" data-post-id="{{ post.id }}">
                             <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Add a comment..." required>
+                                <input type="text" class="form-control" placeholder="Напишите комментарий..." required>
                                 <button class="btn btn-primary" type="submit">
                                     <i class="fas fa-paper-plane"></i>
                                 </button>
@@ -161,7 +166,7 @@
                         </form>
                         {% else %}
                         <div class="alert alert-info mt-3">
-                            <a href="{{ url_for('login') }}" class="alert-link">Log in</a> to post a comment.
+                            <a href="{{ url_for('login') }}" class="alert-link">Войдите</a>, чтобы комментировать.
                         </div>
                         {% endif %}
                     </div>
@@ -172,10 +177,10 @@
         {% else %}
         <div class="text-center p-4">
             <i class="fas fa-newspaper fa-3x mb-3 text-muted"></i>
-            <p>No posts about this place yet.</p>
+            <p>Никто еще ничего не публиковал об этом месте. Сделайте это первым!</p>
             {% if current_user.is_authenticated %}
             <a href="{{ url_for('create_post') }}" class="btn btn-primary">
-                <i class="fas fa-edit me-1"></i> Create Post
+                <i class="fas fa-edit me-1"></i> Создать публикацию
             </a>
             {% endif %}
         </div>
@@ -186,7 +191,7 @@
     <div class="tab-pane fade" id="comments" role="tabpanel" aria-labelledby="comments-tab">
         <div class="card">
             <div class="card-body">
-                <h5 class="mb-4">What people say about this place</h5>
+                <h5 class="mb-4">Что люди думают об этом месте</h5>
                 
                 <div class="comments-list">
                     {% for comment in comments %}
@@ -203,27 +208,27 @@
                         </div>
                     </div>
                     {% else %}
-                    <p class="text-muted">No comments about this place yet. Be the first to comment!</p>
+                    <p class="text-muted">Пусто. Оставьте первый комментарий!</p>
                     {% endfor %}
                 </div>
                 
                 {% if current_user.is_authenticated %}
                 <hr class="my-4">
-                <h5 class="mb-3">Add Your Comment</h5>
+                <h5 class="mb-3">Добавить комментарий</h5>
                 <form method="post" action="{{ url_for('comment_place', place_id=place.id) }}" id="placeCommentForm">
                     {{ comment_form.hidden_tag() }}
                     <div class="mb-3">
-                        {{ comment_form.content(class="form-control", rows=3, placeholder="Write your comment here...") }}
+                        {{ comment_form.content(class="form-control", rows=3, placeholder="Напишите комментарий...") }}
                     </div>
                     <div class="text-end">
                         <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-paper-plane me-1"></i> Post Comment
+                            <i class="fas fa-paper-plane me-1"></i> Опубликовать
                         </button>
                     </div>
                 </form>
                 {% else %}
                 <div class="alert alert-info mt-4">
-                    <a href="{{ url_for('login') }}" class="alert-link">Log in</a> to add a comment about this place.
+                    <a href="{{ url_for('login') }}" class="alert-link">Войдите</a> чтобы комментировать.
                 </div>
                 {% endif %}
             </div>

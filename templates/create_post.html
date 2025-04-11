@@ -63,8 +63,8 @@
 
 {% block content %}
 <div class="card">
-    <div class="card-header bg-primary text-white">
-        <h5 class="mb-0"><i class="fas fa-edit me-2"></i> Create New Post</h5>
+    <div class="card-header bg-white text-black">
+        <h5 class="mb-0">Создать новую публикацию</h5>
     </div>
     <div class="card-body">
         <form method="post" action="{{ url_for('create_post') }}" enctype="multipart/form-data">
@@ -90,7 +90,7 @@
             <div class="mb-3">
                 {{ form.media_files.label(class="form-label") }}
                 {{ form.media_files(class="form-control" + (" is-invalid" if form.media_files.errors else ""), multiple=true, accept="image/*,video/*", id="mediaFiles") }}
-                <div class="form-text">Upload up to 3 images or videos from your device.</div>
+                <div class="form-text">Загруите до 3 изображения/видео.</div>
                 {% for error in form.media_files.errors %}
                 <div class="invalid-feedback">{{ error }}</div>
                 {% endfor %}
@@ -98,9 +98,9 @@
             </div>
             
             <div class="mb-3 position-relative">
-                <label for="placeSearch" class="form-label">Place</label>
-                {{ form.place_search(class="form-control" + (" is-invalid" if form.place_id.errors else ""), id="placeSearch", placeholder="Search for a place...") }}
-                <div class="form-text">Search and select a place this post is about.</div>
+                <label for="placeSearch" class="form-label">Место</label>
+                {{ form.place_search(class="form-control" + (" is-invalid" if form.place_id.errors else ""), id="placeSearch", placeholder="Введите название места") }}
+                <div class="form-text">Выберите место, которому посвящена эта публикация.</div>
                 <div class="place-search-results d-none" id="placeSearchResults"></div>
                 {% for error in form.place_id.errors %}
                 <div class="invalid-feedback">{{ error }}</div>
@@ -108,7 +108,7 @@
             </div>
             
             <div class="text-end">
-                <a href="{{ url_for('index') }}" class="btn btn-outline-secondary me-2">Cancel</a>
+                <a href="{{ url_for('index') }}" class="btn btn-outline-secondary me-2">Отмена</a>
                 {{ form.submit(class="btn btn-primary") }}
             </div>
         </form>
